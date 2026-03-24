@@ -1,0 +1,19 @@
+{
+  "name": "banking_system_api",
+  "version": "1.0.0",
+  "description": "A banking API project using node.js and express with mongoose and implemented jwt auth, Banking operation etc..",
+  "license": "ISC",
+  "author": "Harshit Variya",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.3.1",
+    "nodemon": "^3.1.14"
+  }
+}
