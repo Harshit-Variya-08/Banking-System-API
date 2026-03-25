@@ -6,26 +6,34 @@ import userModel from '../models/userModel.js';
 import validateAuth from '../utils/validation.js';
 const router = express.Router();
 
-router.post("/register",(req,resp)=>
+router.post("/register",async(req,resp)=>
 {
-    const {name, email , password , balance }=req.body;
-    const acNum = generateAcNum();
-    bcrypt.genSalt(10,(err,salt)=>
-    {
-        bcrypt.hash(password,salt,async (err,hash)=>
+   
+        const {name, email , password , balance }=req.body;
+        //Cheaking all fields are given...
+        if(!name || !email ||  !password || !balance)
+            {
+                return resp.json({Error : "All fields are required."})
+            }
+        // Finding if email already exists in databse..?
+        const findUser = await userModel.findOne({email});
+    if(findUser)
         {
-            // console.log(hash);
-                const user = await userModel.create({
-                        name,
-                        email,
-                        password: hash,
-                        balance,
-                        acNum
-                        })
-        resp.json({"message":"working",data: user});
-
-        })
-    })
+            return resp.json({Error : "Account Already Exists ! Please login."});
+        }
+    const acNum = generateAcNum();
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(password,salt);
+         const user = await userModel.create({
+           name,
+           email,
+           password: hash,
+           balance,
+           acNum,
+         });
+         resp.json({ message: "working", data: user });
+    
+   
 });
 
 router.post("/login",async(req,resp)=>
@@ -41,10 +49,17 @@ router.post("/login",async(req,resp)=>
                     {
                          return resp.json({message: "Password not matched.."});
                     }
-                let token = jwt.sign({email,name:user.name,id:user._id},"Harshit@8406");    
+                let token = jwt.sign({email,name:user.name,id:user._id},"Harshit@8406",{expiresIn:"10m" });    
                 resp.json({message: "Login Success" , loginToken : token})
             })
         }
+})
+router.get("/currentInfo",validateAuth,async(req,resp)=>
+{
+    const user = await userModel.findById(req.user.id);
+    console.log(user);
+    resp.json({message : "success", Current_User_data:{Name: user.name, Balance : user.balance , Email: user.email , Ac : user.acNum} });
+
 })
 router.put("/addBal",validateAuth,async(req,resp)=>
 {

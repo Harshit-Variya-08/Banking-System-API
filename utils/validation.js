@@ -8,7 +8,11 @@ const validateAuth = (req,resp ,next)=>
             return        resp.json({message: "No token found"});
             }
         const decode = jwt.verify(token,"Harshit@8406");
-        console.log(decode);
+        if(!decode)
+            {
+                return resp.json({error : "Token verification failed please do login again"})
+            }
+        // console.log(decode);
         req.user = decode;
         next();
         // resp.json({decodeData : req.user})

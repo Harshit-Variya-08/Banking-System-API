@@ -38,7 +38,19 @@ router.post("/transfer",validateAuth,async(req,resp)=>
         receiver : receiver._id,
         amount : Transfer_amount 
     })
-    resp.json({message: "transer success"});
+    resp.json({message: `transer success ,$${amount} has been transfer to ${receiver.name} ` , Avl_Bal : sender.balance});
 })
 
+router.get("/history",validateAuth,async(req,resp)=>
+{
+  const transactions = await transactionModel
+    .find({
+      $or: [{ sender: req.user.id }, { receiverId: req.user.id }],
+    })
+    .select("-__v")
+    .populate("sender", "email -_id")
+    .populate("receiver", "email -_id");
+
+    resp.json({All_transaction: transactions});
+})
 export default router;

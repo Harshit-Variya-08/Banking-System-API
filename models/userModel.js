@@ -6,10 +6,23 @@ mongoose.connect("mongodb://localhost:27017/Bank_Database").then(()=>
 })
 
 const userSchema = mongoose.Schema({
-    name: String,
-    email : String,
-    password : String,
-    balance : Number,
+    name: {
+        type : String,
+        // required : true
+    },
+    email : {
+        type : String,
+        // required : true
+    },
+    password : {
+        type : String,
+        // required : true
+    },
+    balance : {
+        type : Number,
+        default: 0
+        // required: true
+    },
     acNum : String
 })
 
